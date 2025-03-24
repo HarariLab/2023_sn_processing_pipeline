@@ -1,9 +1,9 @@
 include: "load_samples.smk"
 
-#rule cellranger_all:
-#    input:
-#        os.path.join(config["stats_dir"],"cellranger_stats.csv")
-#    default_target: True
+rule cellranger_all:
+    input:
+        os.path.join(config["stats_dir"],"cellranger_stats.csv")
+    default_target: True
 
 rule cellranger_collect_statistics:
     input:

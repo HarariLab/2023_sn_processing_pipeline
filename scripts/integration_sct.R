@@ -18,7 +18,15 @@ seu_clean <- SCTransform(
   conserve.memory = TRUE
 )
 
-seu_clean <- NormalizeData(seu_clean, assay = "RNA")
+# Let's make a note that on Phase 3 and Phase 4 we got an error when
+# running Cell Cycle Score on SCT array.
+# This is a possible workaround to avoid the error suggested by Iara
+# as using RNA assay instead of SCT:
+#
+# seu_clean <- NormalizeData(seu_clean, assay = "RNA")
+# seu_clean <- CellCycleScoring(seu_clean, s.features = s.genes,
+#                              g2m.features = g2m.genes, set.ident = FALSE,
+#                              assay = "RNA")
 
 ## CELL CYCLE SCORING
 
@@ -28,7 +36,7 @@ g2m.genes <- stringr::str_to_title(cc.genes$g2m.genes)
 
 seu_clean <- CellCycleScoring(seu_clean, s.features = s.genes,
                               g2m.features = g2m.genes, set.ident = FALSE,
-                              assay = "RNA")
+                              assay = "SCT")
 saveRDS(seu_clean, file = snakemake@output[[1]])
 
 sink()
