@@ -9,6 +9,7 @@ suppressPackageStartupMessages(library(HGNChelper))
 suppressPackageStartupMessages(library(tidyr))
 source("scripts/utils/sc-type-master/R/gene_sets_prepare.R")
 source("scripts/utils/sc-type-master/R/sctype_score_.R")
+options(future.globals.maxSize = 1 * 1024^5)
 set.seed(123)
 
 min_cells <- snakemake@config[["min_cells"]]
@@ -58,10 +59,16 @@ cluster_predictions <- as.data.frame(apply(t(es.max), 1, function(x){
 }))
 colnames(cluster_predictions) <- "sctype_prediction"
 
-seu <- FindClusters(seu, resolution = res)
+seu <- FindClusters(seu, group.singletons = FALSE, resolution = res)
 cell_types <- gsub(" ", ".",names(gs_list$gs_positive))
 seu <- AddMetaData(seu, as.data.frame(t(es.max)))
 seu <- AddMetaData(seu, cluster_predictions)
+
+# Get the predicted cell types from sctype
+sctypes <- unique(seu@meta.data$sctype_prediction)
+
+# Filter cell_types to only include sctype annotations (remove cell types that weren't recognized by sctype)
+cell_types <- intersect(cell_types, sctypes)
 
 agg_data <- as.data.frame(seu@meta.data %>% group_by(across(paste0("SCT_snn_res.",res))) %>% 
   mutate(across(all_of(cell_types), ~ sum(.x)), .keep = "used") %>% distinct())

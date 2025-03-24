@@ -5,6 +5,7 @@ sink(error_log, type = "message")
 
 suppressPackageStartupMessages(library(Seurat))
 suppressPackageStartupMessages(library(dplyr))
+options(future.globals.maxSize = 1 * 1024^5)
 set.seed(123)
 
 min_cells <- snakemake@config[["min_cells"]]

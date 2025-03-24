@@ -4,6 +4,7 @@ sink(output_log, type = "output")
 sink(error_log, type = "message")
 
 suppressPackageStartupMessages(library(Seurat))
+options(future.globals.maxSize = 1 * 1024^5)
 set.seed(123)
 
 seu_clean <- readRDS(snakemake@input[[1]])
@@ -17,6 +18,8 @@ seu_clean <- SCTransform(
   conserve.memory = TRUE
 )
 
+seu_clean <- NormalizeData(seu_clean, assay = "RNA")
+
 ## CELL CYCLE SCORING
 
 s.genes <- stringr::str_to_title(cc.genes$s.genes)
@@ -25,7 +28,7 @@ g2m.genes <- stringr::str_to_title(cc.genes$g2m.genes)
 
 seu_clean <- CellCycleScoring(seu_clean, s.features = s.genes,
                               g2m.features = g2m.genes, set.ident = FALSE,
-                              assay = "SCT")
+                              assay = "RNA")
 saveRDS(seu_clean, file = snakemake@output[[1]])
 
 sink()
