@@ -7,6 +7,7 @@ library(Seurat)
 library(data.table)
 library(dplyr)
 library(DoubletFinder)
+options(future.globals.maxSize = 1 * 1024^5)
 set.seed(123)
 
 rename_columns <- function(pattern, columns_, new_name) {
@@ -22,9 +23,11 @@ dims_ <- snakemake@config[["doublet_dims"]]
 counts <- Read10X(file.path(dirname(snakemake@input[[1]]),
                             snakemake@params[["mtx_location"]]))
 
+
 if (length(names(counts)) > 1) {
   counts <- counts$`Gene Expression`
 }
+
 seu <- CreateSeuratObject(counts,
                           min.cells = min_cells) %>%
     SCTransform() %>%

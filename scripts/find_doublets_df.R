@@ -7,6 +7,7 @@ suppressPackageStartupMessages(library(Seurat))
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(DoubletFinder))
+options(future.globals.maxSize = 1 * 1024^5)
 set.seed(123)
 
 rename_columns <- function(pattern, columns_, new_name) {

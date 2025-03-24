@@ -10,6 +10,7 @@ suppressPackageStartupMessages(library(tidyr))
 source("scripts/utils/sc-type-master/R/gene_sets_prepare.R")
 source("scripts/utils/sc-type-master/R/sctype_score_.R")
 source("scripts/utils/peakfinder.R")
+options(future.globals.maxSize = 1 * 1024^5)
 set.seed(123)
 
 min_cells <- snakemake@config[["min_cells"]]
@@ -72,6 +73,10 @@ filtered_cells <- c()
 for (cell_type in unique(seu_filtered$qc_sctype_prediction)) {
   print(cell_type)
   seu_cell_type <- subset(seu_filtered, qc_sctype_prediction == cell_type)
+  #Skip low cell count cells
+  if (length(seu_cell_type$qc_sctype_prediction) < 100) {
+      next
+  }
   peaks <- peakfinder(seu_cell_type$nCount_RNA_log10)
   umi_dist <- seu_cell_type@meta.data[,c("nCount_RNA_log10")]
   # average and merge picks that are too close to each other

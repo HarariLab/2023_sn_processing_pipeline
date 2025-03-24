@@ -9,13 +9,15 @@ include: "rules/03_qc_filtering.smk"
 include: "rules/04_integration.smk"
 
 
-all_input_list = [rules.cellranger_all.input,
-                  rules.doublets_all.input,
+all_input_list = [rules.doublets_all.input,
                   rules.qc_all.input,
                   rules.integration_all.input]
 
 if (not(config.get("skip_soup", False))):
     all_input_list.append([rules.decontx_all.input])
+
+if (not(config.get("skip_cellranger", False))):
+    all_input_list.append([rules.cellranger_all.input])
 
 
 rule all:
