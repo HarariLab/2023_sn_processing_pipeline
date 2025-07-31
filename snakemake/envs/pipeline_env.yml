@@ -18,3 +18,4 @@ dependencies:
   - r-httpuv
   - r-fields
   - r-matrixstats=1.1.0
+  - r-keyring=1.3.1
