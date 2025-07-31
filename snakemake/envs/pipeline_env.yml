@@ -19,3 +19,5 @@ dependencies:
   - r-fields
   - r-matrixstats=1.1.0
   - r-keyring=1.3.1
+  - bioconductor-rhdf5filters=1.10.0
+  - bioconductor-glmgampoi=1.10.0
