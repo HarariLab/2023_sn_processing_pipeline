@@ -27,10 +27,8 @@ Repository with single nuclei RNAseq initial (QC + integration) data analysis pi
 ### Run pipeline
 Dry-run
 
-    snakemake -pr -s snakemake/run_pipeline.smk --configfile snakemake/config/config.yml \
-        -c 4 --use-conda --conda-frontend mamba --rerun-incomplete --scheduler=greedy --dry-run
+    snakemake --use-conda --rerun-incomplete --scheduler=greedy --dry-run
 
 Real run
 
-    snakemake -pr -s snakemake/run_pipeline.smk --configfile snakemake/config/config.yml \
-        -c 4 --use-conda --conda-frontend mamba --rerun-incomplete --scheduler=greedy
+    snakemake --use-conda --rerun-incomplete --scheduler=greedy

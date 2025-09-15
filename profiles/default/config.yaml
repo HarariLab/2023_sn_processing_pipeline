@@ -1,0 +1,28 @@
+# Resources set on the OSC
+executor: slurm
+jobs: 10
+latency-wait: 30
+scheduler: greedy
+default-resources:
+    slurm_account: "pas2713"
+    runtime: 60
+    mem_mb: 32000
+
+set-resources:
+    doublets_integrate:
+        mem_mb: 128000
+        runtime: 600
+    qc_integrate:
+        mem_mb: 128000
+        runtime: 600
+    integration_merge:
+        mem_mb: 128000
+        runtime: 600
+    integration_plots:
+        mem_mb: 128000
+        runtime: 600
+    integration_cellxgene:
+        mem_mb: 128000
+        runtime: 600
+    
+    

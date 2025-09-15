@@ -1,4 +1,4 @@
-name: 2023_aus_brain
+name: 2024_mapt_processing_qc
 channels:
   - conda-forge
   - bioconda
@@ -8,7 +8,7 @@ dependencies:
   - r-tidyverse=1.3.2
   - r-readxl=1.4.2
   - r-polyclip
-  - r-igraph
+  - r-igraph=1.4.2
   - r-xml
   - ca-certificates
   - openssl
@@ -21,3 +21,9 @@ dependencies:
   - r-keyring=1.3.1
   - bioconductor-rhdf5filters=1.10.0
   - bioconductor-glmgampoi=1.10.0
+  - r-locfit=1.5_9.9
+  - r-cairo=1.6_0
+  - bioconductor-rtracklayer=1.58.0
+  - r-rcppparallel=5.1.6
+  - r-qs=0.26.3
+  - r-pak=0.7.2
