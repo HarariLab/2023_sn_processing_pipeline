@@ -9,6 +9,11 @@ ALIGN_DIR = config["decontx_dir"]
 CR_LOCATION = "outs/filtered_feature_bc_matrix"
 if ("skip_soup" in config.keys() and config["skip_soup"]):
     ALIGN_DIR = config["align_dir"]
+    INPUT_DEPENDENCY = join(ALIGN_DIR, "{sample}", CR_LOCATION)
+    MTX_LOCATION = "filtered_feature_bc_matrix"
+else:
+    INPUT_DEPENDENCY = join(ALIGN_DIR, "{sample}", "decontx.done")
+    MTX_LOCATION = CR_LOCATION
 STATS_DIR = config["stats_dir"]
 SCDF_RESULTS_DIR = join(config["doublets_dir"],"scDblFinder")
 DF_RESULTS_DIR = join(config["doublets_dir"],"DoubletFinder")
@@ -45,11 +50,11 @@ rule doublets_optimize_pk_df:
     conda: 
         config["conda_env"]
     input:
-        join(ALIGN_DIR, "{sample}", "decontx.done")
+        INPUT_DEPENDENCY
     output:
         join(DF_PARAMS_DIR,"{sample}.rds")
     params:
-        mtx_location = CR_LOCATION
+        mtx_location = MTX_LOCATION
     log:
         err="logs/{sample}/optimize_pk_df.err",
         log="logs/{sample}/optimize_pk_df.log"
@@ -61,11 +66,11 @@ rule doublets_find_doublets_scdf:
     conda: 
         config["conda_env"]
     input: 
-        join(ALIGN_DIR, "{sample}", "decontx.done")
+        INPUT_DEPENDENCY
     output: 
         join(SCDF_RESULTS_DIR,"{sample}.rds")
     params:
-        mtx_location = CR_LOCATION
+        mtx_location = MTX_LOCATION
     log:
         err="logs/{sample}/find_doublets_scdf.err",
         log="logs/{sample}/find_doublets_scdf.log"
@@ -77,13 +82,13 @@ rule doublets_find_doublets_df:
     conda: 
         config["conda_env"]
     input:
-        join(ALIGN_DIR, "{sample}", "decontx.done"),
+        INPUT_DEPENDENCY,
         rules.doublets_optimize_pk_df.output,
         rules.doublets_find_doublets_scdf.output
     output:
         join(DF_RESULTS_DIR,"{sample}.rds")
     params:
-        mtx_location = CR_LOCATION
+        mtx_location = MTX_LOCATION
     log:
         err="logs/{sample}/find_doublets_df.err",
         log="logs/{sample}/find_doublets_df.log"
@@ -95,13 +100,13 @@ rule doublets_garnett_predict:
     conda: 
         config["conda_env"]
     input: 
-        join(ALIGN_DIR, "{sample}", "decontx.done"),
+        INPUT_DEPENDENCY,
         rules.doublets_find_doublets_df.output,
         rules.doublets_find_doublets_scdf.output
     output: 
         join(GARNETT_DIR,"{sample}.rds")
     params:
-        mtx_location = CR_LOCATION
+        mtx_location = MTX_LOCATION
     log:
         err="logs/{sample}/garnett_predict.err",
         log="logs/{sample}/garnett_predict.log"
@@ -113,11 +118,11 @@ rule doublets_sctype_predict:
     conda: 
         config["conda_env"]
     input: 
-        join(ALIGN_DIR, "{sample}", "decontx.done")
+        INPUT_DEPENDENCY
     output: 
         join(SCTYPE_DIR,"{sample}.rds")
     params:
-        mtx_location = CR_LOCATION
+        mtx_location = MTX_LOCATION
     log:
         err="logs/{sample}/sctype_predict.err",
         log="logs/{sample}/sctype_predict.log"
@@ -129,7 +134,7 @@ rule doublets_process:
     conda: 
         config["conda_env"]
     input: 
-        join(ALIGN_DIR, "{sample}", "decontx.done"),
+        INPUT_DEPENDENCY,
         rules.doublets_sctype_predict.output,
         rules.doublets_find_doublets_scdf.output,
         rules.doublets_find_doublets_df.output
@@ -137,7 +142,7 @@ rule doublets_process:
         processed = join(PROCESSED_DIR,"{sample}.rds"),
         filtered = join(FILTERED_DIR,"{sample}.rds")
     params:
-        mtx_location = CR_LOCATION
+        mtx_location = MTX_LOCATION
     log:
         err="logs/{sample}/processed_doublets.err",
         log="logs/{sample}/processed_doublets.log"
